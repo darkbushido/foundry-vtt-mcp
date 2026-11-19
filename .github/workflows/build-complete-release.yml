@@ -326,12 +326,12 @@ jobs:
     - name: Build Mac PKG Installer
       run: |
         cd installer
-        node build-mac-pkg.js
+        VERSION="${PACKAGE_VERSION#v}" node build-mac-pkg.js
 
     - name: Build Mac DMG Distribution
       run: |
         cd installer
-        node build-dmg.js
+        VERSION="${PACKAGE_VERSION#v}" node build-dmg.js
 
     - name: Verify Mac DMG
       run: |
