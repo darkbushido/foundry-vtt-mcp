@@ -79,7 +79,11 @@ so Foundry installs and updates the module from here.
   (`dist/main.js`) isn't in git, so a branch URL can't be installed.
 - GitHub disables Actions on forks by default: enable them once under the fork's
   **Settings → Actions → General**.
-- To publish: push a `v*` tag from `sr3e` (`git tag v0.8.6-sr3e.1; git push origin v0.8.6-sr3e.1`).
+- To publish: push a new `v*` tag from `sr3e` (`git tag -a v0.8.6-sr3e.3 -m ...; git push origin v0.8.6-sr3e.3`).
+  Don't start the workflow by hand from the Actions tab: a manual run builds whatever branch it's
+  started from (`master` by default) and never creates a release.
+- The fork's workflow names the Mac pkg/DMG from the tag (`VERSION=` on the two Mac build steps).
+  Upstream names them from `package.json`, which breaks on suffixed tags. Keep this on a rebase.
   The tag triggers `.github/workflows/build-complete-release.yml` on the fork, which attaches
   `module.json` and `foundry-vtt-mcp.zip`. Its last step, "Update Foundry VTT Package Registry",
   fails on the fork (no upstream secret). That's expected, and it runs after the release exists.
