@@ -68,10 +68,24 @@ matching upstream release with its installer first (same version as this fork), 
 
 Re-running the upstream installer overwrites these files, so repeat the steps after each upgrade.
 
-The Foundry module needs no change, because this fork doesn't touch it. If you later
-update the module, note that `module.json` still points `manifest`/`download` at upstream.
-Point them at `https://github.com/darkbushido/foundry-vtt-mcp/releases/latest/download/…`
-and publish a release on the fork.
+### Foundry module (production)
+
+The fork's code doesn't change the module, but `module.json` on `sr3e` points `url`,
+`manifest` and `download` at **this fork's releases**
+(`https://github.com/darkbushido/foundry-vtt-mcp/releases/latest/download/module.json`),
+so Foundry installs and updates the module from here.
+
+- The manifest only works once the fork has a published release. The built module
+  (`dist/main.js`) isn't in git, so a branch URL can't be installed.
+- GitHub disables Actions on forks by default: enable them once under the fork's
+  **Settings → Actions → General**.
+- To publish: push a `v*` tag from `sr3e` (`git tag v0.8.6-sr3e.1; git push origin v0.8.6-sr3e.1`).
+  The tag triggers `.github/workflows/build-complete-release.yml` on the fork, which attaches
+  `module.json` and `foundry-vtt-mcp.zip`. Its last step, "Update Foundry VTT Package Registry",
+  fails on the fork (no upstream secret). That's expected, and it runs after the release exists.
+- Foundry only offers an update when `version` in `module.json` is newer than the installed
+  one. Bump it for each fork release.
+- On a rebase, keep the fork's three URLs if upstream's `module.json` conflicts.
 
 ## Notes for consumers
 
