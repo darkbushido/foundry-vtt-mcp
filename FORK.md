@@ -84,8 +84,9 @@ so Foundry installs and updates the module from here.
   started from (`master` by default) and never creates a release.
 - The fork's workflow names the Mac pkg/DMG from the tag (`VERSION=` on the two Mac build steps).
   Upstream names them from `package.json`, which breaks on suffixed tags. The `create-release` job
-  also declares `permissions: contents: write`, since a fork's default token is read-only. Keep both
-  on a rebase.
+  also declares `permissions: contents: write`, since a fork's default token is read-only. Its release-note
+  and registry links use `${{ github.repository }}` instead of upstream's URL. Keep all three on a
+  rebase.
   The tag triggers `.github/workflows/build-complete-release.yml` on the fork, which attaches
   `module.json` and `foundry-vtt-mcp.zip`. Its last step, "Update Foundry VTT Package Registry",
   fails on the fork (no upstream secret). That's expected, and it runs after the release exists.
