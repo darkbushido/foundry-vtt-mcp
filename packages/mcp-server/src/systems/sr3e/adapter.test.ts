@@ -136,6 +136,36 @@ describe('SR3EAdapter', () => {
     expect(adapter.formatItemDetails(unknown)).toEqual({});
   });
 
+  it('drops false flags and zero placeholders but keeps meaningful zeros', () => {
+    expect(
+      adapter.formatItemDetails({
+        type: 'melee',
+        system: { category: 'POL', damage: '(STR)S', ready: true, shock: false, reach: 0 },
+      })
+    ).toEqual({ category: 'POL', damage: '(STR)S' });
+    expect(
+      adapter.formatItemDetails({
+        type: 'firearm',
+        system: { damage: '9M', ready: false, loadedRounds: 0, recoilMod: 0 },
+      })
+    ).toEqual({ damage: '9M', ready: false, loadedRounds: 0 });
+    expect(
+      adapter.formatItemDetails({
+        type: 'cyberware',
+        system: { essenceCost: 2, grade: 'Alpha', rating: 0, essenceSlot: false },
+      })
+    ).toEqual({ essenceCost: 2, grade: 'Alpha' });
+  });
+
+  it('never overwrites the item type with a system field of the same name', () => {
+    expect(
+      adapter.formatItemDetails({
+        type: 'spell',
+        system: { type: 'Mana', force: 3, category: 'Combat', drain: '-1(DL)' },
+      })
+    ).toEqual({ spellType: 'Mana', force: 3, category: 'Combat', drain: '-1(DL)' });
+  });
+
   it('extracts vehicle stats', () => {
     const s = adapter.extractCharacterStats({
       name: 'Bulldog',

@@ -119,3 +119,6 @@ export const SR3E_ITEM_FIELDS: Record<string, readonly string[]> = {
   vehicleweapon: ['weaponType', 'rating', 'mode', 'damage', 'ammunition'],
   vehiclemod: ['rating', 'cfCost', 'load'],
 };
+
+/** Item fields where 0 is real information (an empty magazine), kept by formatItemDetails. */
+export const SR3E_ZERO_MEANINGFUL = new Set(['loadedRounds', 'rounds', 'reloads', 'quantity']);

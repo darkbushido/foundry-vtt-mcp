@@ -16,6 +16,7 @@ import {
   SR3E_VEHICLE_ATTRIBUTES,
   SR3E_POOLS,
   SR3E_ITEM_FIELDS,
+  SR3E_ZERO_MEANINGFUL,
 } from './constants.js';
 
 const SR3EFiltersSchema = z.object({}).passthrough();
@@ -251,7 +252,22 @@ export class SR3EAdapter implements SystemAdapter {
     const sys = item?.system;
     if (!fields || !sys) return {};
     const picked: any = {};
-    for (const f of fields) picked[f] = sys[f];
+    for (const f of fields) {
+      const v = sys[f];
+      // `ready` defaults to true; only a not-ready weapon is worth reporting.
+      if (f === 'ready') {
+        if (v === false) picked.ready = false;
+        continue;
+      }
+      // Drop false flags and zero placeholders, except counts where 0 means "empty".
+      if (v === false || (v === 0 && !SR3E_ZERO_MEANINGFUL.has(f))) continue;
+      // Never shadow the item's own id/name/type: a spell's `system.type` ("Mana") would
+      // otherwise overwrite `type: "spell"`. Prefix with the item type instead (spellType).
+      const key = ['id', 'name', 'type'].includes(f)
+        ? `${item.type}${f[0].toUpperCase()}${f.slice(1)}`
+        : f;
+      picked[key] = v;
+    }
     return compact(picked);
   }
 
