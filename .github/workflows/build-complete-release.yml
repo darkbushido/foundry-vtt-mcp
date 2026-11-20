@@ -361,6 +361,8 @@ jobs:
   create-release:
     needs: [build-nsis, build-mac-pkg]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # create the GitHub release (forks default to a read-only token)
     if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
